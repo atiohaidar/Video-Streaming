@@ -1,5 +1,5 @@
 # Build stage
-FROM rust:1.75-bookworm AS builder
+FROM rust:1.83-bookworm AS builder
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 COPY Cargo.toml ./
 
 # Create dummy main.rs to build dependencies
-RUN mkdir src && echo "fn main() { println!(\"placeholder\"); }" > src/main.rs
+RUN mkdir -p src && echo "fn main() { println!(\"placeholder\"); }" > src/main.rs
 
 # Build dependencies only (cached layer)
 RUN cargo build --release || true
