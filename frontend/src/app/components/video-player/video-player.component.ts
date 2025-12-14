@@ -418,21 +418,21 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
                 backBufferLength: 90,
             });
 
-            this.hls.loadSource(streamUrl);
-            this.hls.attachMedia(video);
+            this.hls!.loadSource(streamUrl);
+            this.hls!.attachMedia(video);
 
-            this.hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
-                this.levels = data.levels;
+            this.hls!.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
+              this.levels = data.levels;
                 video.play().catch(() => {
                     // Autoplay blocked, user needs to interact
                 });
             });
 
-            this.hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
-                this.currentLevel = data.level;
+            this.hls!.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
+              this.currentLevel = data.level;
             });
 
-            this.hls.on(Hls.Events.ERROR, (_, data) => {
+            this.hls!.on(Hls.Events.ERROR, (_, data) => {
                 if (data.fatal) {
                     switch (data.type) {
                         case Hls.ErrorTypes.NETWORK_ERROR:
