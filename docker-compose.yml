@@ -100,8 +100,6 @@ services:
       SERVER_HOST: 0.0.0.0
       SERVER_PORT: 3000
     volumes:
-      - ./backend:/app
-      - backend_cargo_cache:/usr/local/cargo/registry
       - temp_uploads:/tmp/uploads
     ports:
       - "3000:3000"
@@ -121,13 +119,10 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: videostream-frontend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     ports:
       - "4200:4200"
-    environment:
-      - API_URL=http://localhost:3000
+    depends_on:
+      - backend
     networks:
       - videostream-network
 
@@ -152,7 +147,6 @@ volumes:
   postgres_data:
   redis_data:
   minio_data:
-  backend_cargo_cache:
   temp_uploads:
   nginx_cache:
 

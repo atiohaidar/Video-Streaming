@@ -10,16 +10,18 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy manifests
-COPY Cargo.toml Cargo.lock* ./
+COPY Cargo.toml ./
 
 # Create dummy main.rs to build dependencies
-RUN mkdir src && echo "fn main() {}" > src/main.rs
+RUN mkdir src && echo "fn main() { println!(\"placeholder\"); }" > src/main.rs
 
 # Build dependencies only (cached layer)
-RUN cargo build --release && rm -rf src
+RUN cargo build --release || true
+RUN rm -rf src
 
 # Copy actual source code
 COPY src ./src
+COPY migrations ./migrations
 
 # Build application
 RUN touch src/main.rs && cargo build --release
@@ -55,7 +57,7 @@ ENV TEMP_DIR=/tmp/uploads
 EXPOSE 3000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:3000/health || exit 1
 
 # Run the application
