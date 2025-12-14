@@ -1,5 +1,7 @@
 # Build stage
-FROM rust:1.83-bookworm AS builder
+# Use a nightly toolchain so Cargo supports `edition2024` that some
+# dependencies require (e.g. base64ct v1.8+).
+FROM rust:1.88-bookworm AS builder
 
 WORKDIR /app
 
@@ -7,7 +9,12 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     pkg-config \
     libssl-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Install rustup and set nightly as default so Cargo supports `edition2024`
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Copy manifests
 COPY Cargo.toml ./
