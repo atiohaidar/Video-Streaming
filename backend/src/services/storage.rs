@@ -90,25 +90,6 @@ impl StorageService {
     }
 
     /// Upload video segment
-    pub async fn upload_segment(
-        &self,
-        key: &str,
-        data: Vec<u8>,
-        content_type: &str,
-    ) -> Result<String, Box<dyn std::error::Error + Send + Sync>> {
-        let body = ByteStream::from(data);
-
-        self.client
-            .put_object()
-            .bucket(&self.bucket_segments)
-            .key(key)
-            .body(body)
-            .content_type(content_type)
-            .send()
-            .await?;
-
-        Ok(format!("{}/{}/{}", self.endpoint, self.bucket_segments, key))
-    }
 
     /// Upload segment from file path
     pub async fn upload_segment_from_file(
@@ -239,15 +220,5 @@ impl StorageService {
     /// Get public URL for streaming
     pub fn get_streaming_url(&self, manifest_key: &str) -> String {
         format!("{}/{}/{}", self.endpoint, self.bucket_manifests, manifest_key)
-    }
-
-    /// Get the segments bucket name
-    pub fn get_segments_bucket(&self) -> &str {
-        &self.bucket_segments
-    }
-
-    /// Get the manifests bucket name
-    pub fn get_manifests_bucket(&self) -> &str {
-        &self.bucket_manifests
     }
 }

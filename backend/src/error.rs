@@ -15,7 +15,7 @@ pub enum AppError {
     Storage(String),
 
     #[error("Transcoding error: {0}")]
-    Transcoding(String),
+    // Transcoding variant currently unused; remove to silence dead-code warning
 
     #[error("Not found: {0}")]
     NotFound(String),

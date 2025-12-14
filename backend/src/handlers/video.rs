@@ -9,10 +9,7 @@ use std::sync::Arc;
 use uuid::Uuid;
 
 use crate::error::{AppError, Result};
-use crate::models::{
-    CreateVideoRequest, Resolution, TranscodeJobMessage, UpdateVideoRequest, Video,
-    VideoListResponse, VideoResponse, VideoStatus,
-};
+use crate::models::{TranscodeJobMessage, UpdateVideoRequest, Video, VideoListResponse, VideoResponse};
 use crate::services::{StorageService, TranscoderService};
 
 /// Application state shared across handlers
@@ -151,17 +148,33 @@ pub async fn list_videos(
     let limit = params.limit.unwrap_or(20).min(100);
     let offset = params.offset.unwrap_or(0);
 
-    let videos = sqlx::query_as::<_, Video>(
-        r#"
-        SELECT * FROM videos
-        ORDER BY created_at DESC
-        LIMIT $1 OFFSET $2
-        "#,
-    )
-    .bind(limit)
-    .bind(offset)
-    .fetch_all(&state.db)
-    .await?;
+    // Support optional status filter
+    let videos = if let Some(status_filter) = params.status {
+        sqlx::query_as::<_, Video>(
+            r#"
+            SELECT * FROM videos WHERE status = $1
+            ORDER BY created_at DESC
+            LIMIT $2 OFFSET $3
+            "#,
+        )
+        .bind(status_filter)
+        .bind(limit)
+        .bind(offset)
+        .fetch_all(&state.db)
+        .await?
+    } else {
+        sqlx::query_as::<_, Video>(
+            r#"
+            SELECT * FROM videos
+            ORDER BY created_at DESC
+            LIMIT $1 OFFSET $2
+            "#,
+        )
+        .bind(limit)
+        .bind(offset)
+        .fetch_all(&state.db)
+        .await?
+    };
 
     let total = sqlx::query_scalar::<_, i64>("SELECT COUNT(*) FROM videos")
         .fetch_one(&state.db)

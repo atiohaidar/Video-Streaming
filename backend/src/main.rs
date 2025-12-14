@@ -22,7 +22,7 @@ use crate::handlers::{
 use crate::services::{StorageService, TranscoderService};
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // Initialize logging
     tracing_subscriber::registry()
         .with(tracing_subscriber::EnvFilter::try_from_default_env()

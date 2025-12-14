@@ -8,7 +8,7 @@ use tokio::process::Command;
 use uuid::Uuid;
 
 use crate::config::Config;
-use crate::models::{Resolution, TranscodeJobMessage, VideoStatus};
+use crate::models::{Resolution, TranscodeJobMessage};
 use crate::services::StorageService;
 
 /// Resolution configuration for transcoding

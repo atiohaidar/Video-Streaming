@@ -50,12 +50,6 @@ pub struct Video {
     pub processed_at: Option<DateTime<Utc>>,
 }
 
-/// Request to create a new video
-#[derive(Debug, Deserialize)]
-pub struct CreateVideoRequest {
-    pub title: String,
-    pub description: Option<String>,
-}
 
 /// Request to update video metadata
 #[derive(Debug, Deserialize)]
@@ -117,20 +111,6 @@ pub struct VideoListResponse {
     pub total: i64,
 }
 
-/// Transcoding job model
-#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
-pub struct TranscodingJob {
-    pub id: Uuid,
-    pub video_id: Uuid,
-    pub resolution: String,
-    pub status: VideoStatus,
-    pub progress: Option<i32>,
-    pub output_path: Option<String>,
-    pub error_message: Option<String>,
-    pub started_at: Option<DateTime<Utc>>,
-    pub completed_at: Option<DateTime<Utc>>,
-    pub created_at: DateTime<Utc>,
-}
 
 /// Message for Redis job queue
 #[derive(Debug, Clone, Serialize, Deserialize)]
